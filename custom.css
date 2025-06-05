@@ -1,0 +1,104 @@
+/* Importing a clean and modern font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fdfdfd;
+    color: #1a1a1a;
+}
+
+/* App background with soft gradient and fixed hero image */
+.stApp {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.96), rgba(245,245,245,0.96)),
+    url("https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=1470&q=80") no-repeat center center fixed;
+    background-size: cover;
+    padding: 1rem;
+}
+
+/* Headings */
+h1, h2, h3, h4 {
+    color: #1a1a1a;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Sidebar styling */
+.stSidebar {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Button styling */
+.stButton > button, .stDownloadButton > button {
+    background-color: #009688;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s ease;
+    padding: 0.5rem 1rem;
+    border: none;
+}
+
+.stButton > button:hover, .stDownloadButton > button:hover {
+    background-color: #00796b;
+    transform: scale(1.02);
+}
+
+/* Expander */
+details summary {
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    padding: 0.4rem;
+}
+
+details[open] summary {
+    color: #009688;
+}
+
+/* Sliders and inputs */
+input[type=range] {
+    accent-color: #009688;
+}
+
+.css-1cpxqw2, .css-1rs6os.edgvbvh3 {
+    color: #444;
+}
+
+/* Columns inside containers */
+[data-testid="column"] {
+    padding: 0.75rem;
+}
+
+/* Image container warning message styling */
+div.stAlert {
+    font-size: 0.85rem;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+}
+
+/* Tooltip text and popups */
+.leaflet-tooltip {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* Fix text input color */
+input[type="text"] {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+/* Card-like containers */
+.stContainer {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
