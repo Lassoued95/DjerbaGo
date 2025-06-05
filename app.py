@@ -219,7 +219,7 @@ m = folium.Map(location=center_location, zoom_start=11, tiles=tiles, attr="Djerb
 
 marker_cluster = MarkerCluster().add_to(m)
 for _, row in filtered_df.iterrows():
-    # Create HTML popup with embedded image using IFrame
+    # Create HTML popup with embedded image using IFram
     popup_html = f"""
         <div style="width: 200px;">
             <strong>{row['name']}</strong><br>
