@@ -104,7 +104,7 @@ col1.metric("Lieux disponibles", len(filtered_df), f"{len(filtered_df)/len(df):.
 col2.metric("Vos favoris", len(st.session_state.favorites))
 col3.metric("Vos visites", len(st.session_state.visited))
 
-# --- Tabs Section ---
+# --- Tabs Section --
 st.markdown("## 📍 Lieux recommandés")
 if filtered_df.empty:
     st.info("Aucun lieu trouvé selon les filtres actuels. Élargissez vos critères de recherche.")
