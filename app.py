@@ -1,4 +1,10 @@
 import streamlit as st
+# --- Page Config ---
+st.set_page_config(
+    page_title="Djerba Travel Recommender 🌴", 
+    layout="wide",
+    page_icon="🌴"
+)
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
@@ -9,14 +15,11 @@ import requests
 import os
 from geopy.distance import geodesic
 from datetime import datetime
-import time
 
-# --- Page Config ---
-st.set_page_config(
-    page_title="Djerba Travel Recommender 🌴", 
-    layout="wide",
-    page_icon="🌴"
-)
+# --- Show Streamlit version for debugging ---
+st.sidebar.markdown(f"**Streamlit version:** {st.__version__}")
+
+
 
 # --- Load and apply external CSS ---
 def load_css(file_name):
@@ -104,7 +107,7 @@ col1.metric("Lieux disponibles", len(filtered_df), f"{len(filtered_df)/len(df):.
 col2.metric("Vos favoris", len(st.session_state.favorites))
 col3.metric("Vos visites", len(st.session_state.visited))
 
-# --- Tabs Section --
+# --- Tabs Section ---
 st.markdown("## 📍 Lieux recommandés")
 if filtered_df.empty:
     st.info("Aucun lieu trouvé selon les filtres actuels. Élargissez vos critères de recherche.")
@@ -195,43 +198,47 @@ else:
                 with col2:
                     if st.button(f"❌ Retirer", key=f"remove_{i}"):
                         st.session_state.itinerary.pop(i)
-                        st.experimental_rerun()
+                        st.rerun()
+  # Make sure your Streamlit version supports this
 
 # --- Statistics ---
 st.markdown("## 📊 Statistiques & Insights")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Répartition des catégories")
-    st.bar_chart(filtered_df['category'].value_counts())
+    st.metric("Nombre total de lieux", len(df))
+    st.metric("Nombre de catégories", len(df['category'].unique()))
+    st.metric("Nombre de favoris sélectionnés", len(st.session_state.favorites))
 
 with col2:
-    st.subheader("Niveau de prix")
-    st.bar_chart(filtered_df['price_level'].value_counts())
+    most_rated = sorted(st.session_state.ratings.items(), key=lambda x: x[1], reverse=True)
+    if most_rated:
+        st.write(f"⭐ Lieu le mieux noté: **{most_rated[0][0]}** avec {most_rated[0][1]} étoiles")
+    else:
+        st.write("⭐ Aucun lieu noté pour le moment.")
 
-# --- Map Section ---
+# --- Interactive Map ---
 st.markdown("## 🗺️ Carte interactive")
-m = folium.Map(location=center_location, zoom_start=11, tiles=tiles, attr="Djerba Travel Guide")
+m = folium.Map(location=center_location, zoom_start=12, tiles=tiles)
 
 marker_cluster = MarkerCluster().add_to(m)
 for _, row in filtered_df.iterrows():
-    # Create HTML popup with embedded image using 
     popup_html = f"""
-        <div style="width: 200px;">
-            <strong>{row['name']}</strong><br>
-            Catégorie: {row['category']}<br>
-            Ambiance: {row['mood']}<br>
-            Prix: {row['price_level']}<br>
-            <img src="{row['image']}" width="180">
-        </div>
+    <b>{row['name']}</b><br>
+    {row['description'][:100]}...<br>
+    Catégorie: {row['category']}<br>
+    Ambiance: {row['mood']}<br>
+    Prix: {row['price_level']}
     """
-    iframe = folium.IFrame(html=popup_html, width=200, height=250)
-    popup = folium.Popup(iframe, max_width=250)
-
     folium.Marker(
         location=(row['latitude'], row['longitude']),
-        popup=popup,
-        tooltip=row['name']
+        popup=popup_html,
+        tooltip=row['name'],
+        icon=folium.Icon(color="green", icon="info-sign"),
     ).add_to(marker_cluster)
 
-st_folium(m, width=700, height=500)
+st_folium(m, width=1000, height=600)
+
+# --- Footer ---
+st.markdown("---")
+st.caption("© 2025 DjerbaGo - Guide Intelligent de Voyage. Tous droits réservés.")
