@@ -44,7 +44,7 @@ center_location = (33.813, 10.900)
 
 # --- Sidebar Filters ---
 with st.sidebar:
-    st.image("assets/images/bg1.jpg", use_container_width=True)
+    st.image("assets/images/bg.jpg", use_container_width=True)
     st.header("🎯 Vos préférences de voyage")
     
     name = st.text_input("👋 Votre nom")
@@ -94,8 +94,8 @@ with st.sidebar.expander("✨ Recommandations perso"):
         st.warning("Aucun lieu trouvé avec les filtres actuels.")
 
 # --- Hero Section ---
-st.image("assets/images/bg.jpg", use_container_width=True)
-st.title(":palm_tree: Bienvenue à Djerba - Votre Guide Intelligent de Voyage")
+st.image("assets/images/bg2.jpg", use_container_width=True)
+st.title(":palm_tree: Bienvenue à Djerba - Votre Guide Intelligent de Voyage -DjerbaGo- ")
 st.subheader("Filtrez selon vos envies pour explorer les merveilles de l'île")
 
 # --- Stats ---
@@ -196,10 +196,6 @@ else:
                     if st.button(f"❌ Retirer", key=f"remove_{i}"):
                         st.session_state.itinerary.pop(i)
                         st.experimental_rerun()
-            if st.button("📧 Envoyer l'itinéraire par email"):
-                with st.spinner("Envoi en cours..."):
-                    time.sleep(2)
-                    st.success("Itinéraire envoyé à votre email!")
 
 # --- Statistics ---
 st.markdown("## 📊 Statistiques & Insights")
