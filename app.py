@@ -1,10 +1,4 @@
 import streamlit as st
-# --- Page Config ---
-st.set_page_config(
-    page_title="Djerba Travel Recommender 🌴", 
-    layout="wide",
-    page_icon="🌴"
-)
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
@@ -16,10 +10,12 @@ import os
 from geopy.distance import geodesic
 from datetime import datetime
 
-# --- Show Streamlit version for debugging ---
-st.sidebar.markdown(f"**Streamlit version:** {st.__version__}")
-
-
+# --- Page Config ---
+st.set_page_config(
+    page_title="Djerba Travel Recommender 🌴", 
+    layout="wide",
+    page_icon="🌴"
+)
 
 # --- Load and apply external CSS ---
 def load_css(file_name):
@@ -40,7 +36,12 @@ df = load_data()
 # --- Initialize Session State ---
 for key in ['favorites', 'ratings', 'visited', 'itinerary']:
     if key not in st.session_state:
-        st.session_state[key] = {} if key in ['ratings', 'visited'] else set() if key == 'favorites' else []
+        if key in ['ratings', 'visited']:
+            st.session_state[key] = {}
+        elif key == 'favorites':
+            st.session_state[key] = set()
+        else:
+            st.session_state[key] = []
 
 # --- Default Center Location ---
 center_location = (33.813, 10.900)
@@ -191,54 +192,68 @@ else:
             st.info("Votre itinéraire est vide.")
         else:
             st.write("### 🗓️ Votre plan de voyage")
+
+            def remove_itinerary_item(idx):
+                st.session_state.itinerary.pop(idx)
+
             for i, item in enumerate(st.session_state.itinerary):
                 col1, col2 = st.columns([3, 1])
                 with col1:
                     st.markdown(f"#### {i+1}. {item['name']}")
                 with col2:
-                    if st.button(f"❌ Retirer", key=f"remove_{i}"):
-                        st.session_state.itinerary.pop(i)
-                        st.rerun()
-  # Make sure your Streamlit version supports this
+                    st.button(f"❌ Retirer", key=f"remove_{i}", on_click=remove_itinerary_item, args=(i,))
 
 # --- Statistics ---
 st.markdown("## 📊 Statistiques & Insights")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.metric("Nombre total de lieux", len(df))
-    st.metric("Nombre de catégories", len(df['category'].unique()))
-    st.metric("Nombre de favoris sélectionnés", len(st.session_state.favorites))
+    st.subheader("Répartition des catégories")
+    st.bar_chart(filtered_df['category'].value_counts())
 
 with col2:
-    most_rated = sorted(st.session_state.ratings.items(), key=lambda x: x[1], reverse=True)
-    if most_rated:
-        st.write(f"⭐ Lieu le mieux noté: **{most_rated[0][0]}** avec {most_rated[0][1]} étoiles")
-    else:
-        st.write("⭐ Aucun lieu noté pour le moment.")
+    st.subheader("Niveau de prix")
+    st.bar_chart(filtered_df['price_level'].value_counts())
 
-# --- Interactive Map ---
+
+# --- Stats Grouped ---
+st.markdown("## Vos statistiques personnelles")
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Vos favoris ❤️", len(st.session_state.favorites))
+col2.metric("Lieux visités ✔️", len(st.session_state.visited))
+col3.metric("Itinéraire 🗓️", len(st.session_state.itinerary))
+
+# --- Map Section ---
 st.markdown("## 🗺️ Carte interactive")
-m = folium.Map(location=center_location, zoom_start=12, tiles=tiles)
+m = folium.Map(location=center_location, zoom_start=11, tiles=tiles)
 
 marker_cluster = MarkerCluster().add_to(m)
+
 for _, row in filtered_df.iterrows():
     popup_html = f"""
     <b>{row['name']}</b><br>
-    {row['description'][:100]}...<br>
     Catégorie: {row['category']}<br>
+    Prix: {row['price_level']}<br>
     Ambiance: {row['mood']}<br>
-    Prix: {row['price_level']}
+    <a href="#" target="_blank">En savoir plus</a>
     """
     folium.Marker(
-        location=(row['latitude'], row['longitude']),
+        location=[row['latitude'], row['longitude']],
         popup=popup_html,
         tooltip=row['name'],
-        icon=folium.Icon(color="green", icon="info-sign"),
+        icon=folium.Icon(color="green", icon="info-sign")
     ).add_to(marker_cluster)
 
 st_folium(m, width=1000, height=600)
 
 # --- Footer ---
-st.markdown("---")
-st.caption("© 2025 DjerbaGo - Guide Intelligent de Voyage. Tous droits réservés.")
+st.markdown(
+    """
+    <hr>
+    <p style='text-align:center; color: gray;'>
+    © 2025 DjerbaGo - Guide de voyage interactif | Créé par Mohamed Lassoued
+    </p>
+    """,
+    unsafe_allow_html=True,
+)
