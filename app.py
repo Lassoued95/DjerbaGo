@@ -247,13 +247,16 @@ for _, row in filtered_df.iterrows():
 
 st_folium(m, width=1000, height=600)
 
+st.markdown("""<style>.block-container { padding-bottom: 0rem !important; }</style>""", unsafe_allow_html=True)
+
 # --- Footer ---
 st.markdown(
     """
-    <hr>
-    <p style='text-align:center; color: gray;'>
+    <hr style="margin-top:0px;">
+    <p style='text-align:center; color: gray; margin-top:0px;'>
     © 2025 DjerbaGo - Guide de voyage interactif | Créé par Mohamed Lassoued
     </p>
     """,
     unsafe_allow_html=True,
 )
+
